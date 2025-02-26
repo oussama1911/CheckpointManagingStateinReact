@@ -1,0 +1,70 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+
+}
+
+.task-list{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.task-item{
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px;
+  width: 200px;
+  border-radius: 10px;
+  justify-items: center;
+  
+}
+.task-done{
+  background: green;
+  border: 1px solid green;
+}
+.task-pending{
+  background-color: rgb(167, 8, 35);
+  border: 1px solid red;
+}
+
+button{
+  padding: 8px;
+  background-color: blue;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+
+}
+
+form{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid gray;
+  border-radius: 10px;
+}
+input{
+  padding: 5px;
+  width: 80% ;
+  
+}
+p{
+  margin: 0%;
+}
+.task-btns{
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.task-btns p {
+  padding: 7px;
+
+}
+
+
