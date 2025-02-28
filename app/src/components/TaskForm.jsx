@@ -1,63 +1,79 @@
-import React, { useState, useContext, useEffect } from 'react'
-import { taskContext } from '../context/taskContext'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
-const TaskForm = () => {
+const TaskForm = ({ handleCreate, handleEdit, tasks }) => {
 
-    const { tasks, setTasks } = useContext(taskContext)
     const { id } = useParams()
 
     const [error, setError] = useState(false)
-
-    const nav = useNavigate()
-
-    useEffect(() => {
-        if (id) {
-            const task = tasks.find(task => task.id == id)
-            setTaskName(task.name)
-            setTaskDesc(task.description)
-        }
-    }, [])
-
-
     const [taskName, setTaskName] = useState('')
     const [taskDesc, setTaskDesc] = useState('')
 
+    const nav = useNavigate()
 
-
-    function handleAdd() {
-        const date = new Date().toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })
-        setTasks(prevTasks => [...prevTasks, { id: tasks.length !== 0 ? tasks[tasks.length - 1].id + 1 : 0, name: taskName, description: taskDesc, done: false ,date: date  }])
-    }
-
-    function handleEdit() {
-
-        setTasks(prevTask => prevTask.map(task => task.id == id ? { ...task, name: taskName, description: taskDesc } : task))
-
-    }
+    // Fetch task data if we are editing an existing task
+    useEffect(() => {
+        if (id) {
+            const task = tasks.find(task => task.id == id) // Make sure to compare ids properly (check type and value)
+            if (task) {
+                setTaskName(task.name)
+                setTaskDesc(task.description)
+            }
+        }
+    }, [id, tasks]) // Add tasks and id as dependencies to re-run if either change
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        if (taskName.length < 6) return setError(true)
-        id ? handleEdit(e) : handleAdd()
-        nav('/')
+
+        // Validate that taskName is not empty
+        if (taskName.trim().length < 1) {
+            setError(true)
+            return
+        }
+
+        const newTask = {
+            id: Math.floor(Math.random() * 100000), // Random ID for new tasks
+            name: taskName,
+            description: taskDesc,
+            date: new Date().toLocaleDateString(),
+            done: false
+        }
+
+        const updatedTask = {
+            id: id,
+            name: taskName,
+            description: taskDesc,
+        }
+
+        // Call the appropriate function based on whether we're creating or editing
+        if (id) {
+            handleEdit(updatedTask)  // If task exists, edit it
+        } else {
+            handleCreate(newTask)   // Otherwise, create a new task
+        }
+
+        nav('/') // Navigate back to the home page
     }
 
-
     return (
-        <div>
+        <div className='form-container'>
             <form action='' className='task-name'>
-                <input type='text'
+                <input
+                    type='text'
                     placeholder='task name'
                     value={taskName}
-                    onChange={(e) => setTaskName(e.target.value)} />
-                {error && <p className='error-msg'>name field is required</p>}
-                <input type='text'
+                    onChange={(e) => setTaskName(e.target.value)}
+                />
+                {error && <p className='error-msg'>Name field is required</p>}
+                <input
+                    type='text'
                     placeholder='task description'
                     value={taskDesc}
-                    onChange={(e) => setTaskDesc(e.target.value)} />
-                <button className='form-btn' onClick={handleSubmit}>{id ? 'edit' : 'add'}  add task</button>
-
+                    onChange={(e) => setTaskDesc(e.target.value)}
+                />
+                <button className='form-btn' onClick={handleSubmit}>
+                    {id ? 'Edit Task' : 'Add Task'}
+                </button>
             </form>
         </div>
     )
